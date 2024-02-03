@@ -120,11 +120,11 @@ def crosstab(df, feature, label, roundto=4):
     sns.heatmap(ct_df, annot=True, fmt='d', cmap='coolwarm')
     plt.show()
 
-def bivariate_stats(df, label, roundto=4):
+def bivariate(df, label, roundto=4):
     import pandas as pd
     from scipy import stats
 
-    output_df = pd.DataFrame(columns=['missing %', 'p', 'r', 'y = m(x) + b', 'F', 'X2'])
+    output_df = pd.DataFrame(columns=['missing %', 'skew', 'type', 'unique', 'p', 'r', 'τ', 'ρ', 'y = m(x) + b', 'F', 'X2'])
 
     for feature in df:
         if feature != label:
@@ -141,13 +141,13 @@ def bivariate_stats(df, label, roundto=4):
               rho, rp = stats.spearmanr(df_temp[feature], df_temp[label])
               skew = round(df[feature].skew(), roundto)
               output_df.loc[feature] = [f'{missing}%', skew, dtype, unique, round(p, roundto), round(r, roundto), round(tau, roundto),
-                                         round(rho, roundto), f"y = {round(m, roundto)}x + {round(b, roundto)}", '-', '-', '-']
+                                         round(rho, roundto), f"y = {round(m, roundto)}x + {round(b, roundto)}", '-', '-']
               scatterplot(df_temp, feature, label)
           elif not pd.api.types.is_numeric_dtype(df[feature]) and not pd.api.types.is_numeric_dtype(df_temp[label]):
               # Process C2C relationships
               contingency_table = pd.crosstab(df_temp[feature], df_temp[label])
               X2, p, dof, expected = stats.chi2_contingency(contingency_table)
-              output_df.loc[feature] = [f'{missing}%', '-', dtype, unique, p, '-', '-', '-', '-', '-', '-', X2]
+              output_df.loc[feature] = [f'{missing}%', '-', dtype, unique, p, '-', '-', '-', '-', '-', X2]
               crosstab(df_temp, feature, label)
           else:
               # Process C2N and N2C relationships
@@ -159,10 +159,12 @@ def bivariate_stats(df, label, roundto=4):
                   skew = '-'
                   num = label
                   cat = feature
+                  
               groups = df_temp[cat].unique()
               group_lists = []
               for g in groups:
                   group_lists.append(df_temp[df_temp[cat] == g][num])
+
               f, p = stats.f_oneway(*group_lists) # <-- same as (group_lists[0], group_lists[1], ..., group_lists[n])
               output_df.loc[feature] = [f'{missing}%', skew, dtype, unique, round(p, roundto), '-', '-', '-', '-', round(f, roundto), '-']
               bar_chart(df_temp, cat, num) 
