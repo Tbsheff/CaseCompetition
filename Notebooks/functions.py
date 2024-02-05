@@ -53,7 +53,7 @@ def scatterplot(df, feature, label, roundto=4, linecolor='darkorange'):
   textstr = f'y = {round(m, roundto)}x + {round(b, roundto)}\n'
   textstr += f'r = {round(r, roundto)}, p = {round(p, roundto)}\n'
   textstr += f't = {round(tau, roundto)}, p = {round(tp, roundto)}\n'
-  textstr += f'ρ = {round(rho, roundto)}, p = {round(rp, roundto)}\n'
+  textstr += f'p = {round(rho, roundto)}, p = {round(rp, roundto)}\n'
   textstr += f'{feature} skew = {round(fskew, roundto)}\n'
   textstr += f'{label} skew = {round(lskew, roundto)}'
 
@@ -97,6 +97,22 @@ def bar_chart(df, feature, label, roundto=4, p_threshold=0.05, sig_ttest_only=Tr
 
     # Make a Bonferroni correction --> adjust the p-value threshold to be 0.05 / n of ttests
     bonferroni = p_threshold / len(ttests)
+
+    # Create textstr to add statistics to chart
+    textstr = f'f: {round(f, roundto)}\n'
+    textstr += f'p: {round(p, roundto)}\n'
+    textstr += f'Bonferroni p: {round(bonferroni, roundto)}'
+    for ttest in ttests:
+        if ttest[2] >= bonferroni:
+            textstr += f'\n{ttest[0]}: t: {ttest[1]}, p:{ttest[2]}'
+
+    # If there are too many feature groups, print x labels vertically
+    if df[feature].nunique() > 7:
+        plt.xticks(rotation=90)
+
+    plt.text(.95, 0.10, textstr, fontsize=12, transform=plt.gcf().transFigure)
+    plt.show()
+
 
 def crosstab(df, feature, label, roundto=4):
     import pandas as pd
