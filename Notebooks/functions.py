@@ -93,16 +93,16 @@ def scatterplot(df, feature, label, roundto=4, linecolor="darkorange"):
     fskew = round(df[feature].skew(), roundto)
     lskew = round(df[label].skew(), roundto)
 
-  # Add all of those values into the plot
-  textstr = f'y = {round(m, roundto)}x + {round(b, roundto)}\n'
-  textstr += f'r = {round(r, roundto)}, p = {round(p, roundto)}\n'
-  textstr += f't = {round(tau, roundto)}, p = {round(tp, roundto)}\n'
-  textstr += f'p = {round(rho, roundto)}, p = {round(rp, roundto)}\n'
-  textstr += f'{feature} skew = {round(fskew, roundto)}\n'
-  textstr += f'{label} skew = {round(lskew, roundto)}'
+    # Add all of those values into the plot
+    textstr = f'y = {round(m, roundto)}x + {round(b, roundto)}\n'
+    textstr += f'r = {round(r, roundto)}, p = {round(p, roundto)}\n'
+    textstr += f't = {round(tau, roundto)}, p = {round(tp, roundto)}\n'
+    textstr += f'p = {round(rho, roundto)}, p = {round(rp, roundto)}\n'
+    textstr += f'{feature} skew = {round(fskew, roundto)}\n'
+    textstr += f'{label} skew = {round(lskew, roundto)}'
 
-  plt.text(.95, 0.2, textstr, fontsize=12, transform=plt.gcf().transFigure)
-  plt.show()
+    plt.text(.95, 0.2, textstr, fontsize=12, transform=plt.gcf().transFigure)
+    plt.show()
 
 
 def bar_chart(df, feature, label, roundto=4, p_threshold=0.05, sig_ttest_only=True):
